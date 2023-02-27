@@ -22,7 +22,7 @@ with DAG(
             data_month AS totd_month,
             data_day AS totd_day,
             to_char(make_date(data_year, data_month, data_day), 'DAY') AS totd_day_of_week,
-            json_data::JSON->'map'->>'mapId' AS map_id,
+            json_data::JSON->'map'->>'mapUid' AS map_uid,
             (json_data::JSON->'map'->>'exchangeid')::INTEGER AS exchange_id,
             json_data::JSON->'map'->'authorplayer'->>'name' AS author_name,
             json_data::JSON->'map'->'authorplayer'->>'id' AS author_id,
