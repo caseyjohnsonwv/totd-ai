@@ -21,7 +21,6 @@ with DAG(
             data_year AS totd_year,
             data_month AS totd_month,
             data_day AS totd_day,
-            to_char(make_date(data_year, data_month, data_day), 'DAY') AS totd_day_of_week,
             json_data::JSON->'map'->>'mapUid' AS map_uid,
             (json_data::JSON->'map'->>'exchangeid')::INTEGER AS exchange_id,
             json_data::JSON->'map'->'authorplayer'->>'name' AS author_name,
@@ -34,8 +33,7 @@ with DAG(
             json_data::JSON->'map'->'submitterplayer'->>'id' AS submitter_id,
             date_part('year', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_year,
             date_part('month', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_month,
-            date_part('day', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_day,
-            to_char((json_data::JSON->'map'->>'timestamp')::DATE, 'DAY') AS uploaded_day_of_week
+            date_part('day', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_day
         FROM collect.tmio_raw
         ON CONFLICT DO NOTHING;
     """
