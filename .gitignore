@@ -4,3 +4,4 @@ __pycache__
 
 plugins/
 logs/
+postgres-db-volume/
