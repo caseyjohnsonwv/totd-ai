@@ -9,7 +9,7 @@ with DAG(
     start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
-    tags = ['conform']
+    tags = ['conform', 'tmx'],
 ) as _:
     start_task = EmptyOperator(task_id = 'start_task')
     end_task = EmptyOperator(task_id = 'end_task')
