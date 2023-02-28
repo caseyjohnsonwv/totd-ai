@@ -35,6 +35,13 @@ with DAG(
         poke_interval = 5
     )
 
+    tmx_collection_layer_enhancements = TriggerDagRunOperator(
+        task_id = 'tmx_collection_layer_enhancements',
+        trigger_dag_id = 'collect_tmx_enhancements_raw',
+        wait_for_completion = True,
+        poke_interval = 5
+    )
+
     tmx_conform_layer = TriggerDagRunOperator(
         task_id = 'tmx_conform_layer',
         trigger_dag_id = 'conform_tmx_cleaned',
@@ -42,7 +49,15 @@ with DAG(
         poke_interval = 5
     )
 
+    tmx_conform_layer_enhancements = TriggerDagRunOperator(
+        task_id = 'tmx_conform_layer_enhancements',
+        trigger_dag_id = 'conform_tmx_enhancements_cleaned',
+        wait_for_completion = True,
+        poke_interval = 5
+    )
+
     start_task \
     >> tmio_collection_layer >> tmio_conform_layer \
     >> tmx_collection_layer >> tmx_conform_layer \
+    >> tmx_collection_layer_enhancements >> tmx_conform_layer_enhancements \
     >> end_task

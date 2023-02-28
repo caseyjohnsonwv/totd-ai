@@ -25,8 +25,6 @@ with DAG(
             json_data::JSON->>'DifficultyName' AS difficulty_name,
             (STRING_TO_ARRAY(json_data::JSON->>'Tags', ','))::INTEGER[] AS map_tags,
             (json_data::JSON->>'Laps')::INTEGER AS laps,
-            (json_data::JSON->>'UserID')::INTEGER AS user_id,
-            json_data::JSON->>'Username' AS username,
             date_part('year', (json_data::JSON->>'UploadedAt')::DATE) AS uploaded_year,
             date_part('month', (json_data::JSON->>'UploadedAt')::DATE) AS uploaded_month,
             date_part('day', (json_data::JSON->>'UploadedAt')::DATE) AS uploaded_day,
