@@ -82,7 +82,9 @@ with DAG(
             $${{ti.xcom_pull(key='tmx_authors_today_raw')['track_id']}}$$,
             $${{ti.xcom_pull(key='tmx_authors_today_raw')['json_data']}}$$
         )
-        ON CONFLICT DO NOTHING;
+        ON CONFLICT (track_id)
+        DO UPDATE SET
+            json_data = EXCLUDED.json_data;
     """
     _push_authors_to_postgres = PostgresOperator(task_id = 'push_authors_to_postgres', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 
@@ -94,7 +96,9 @@ with DAG(
             $${{ti.xcom_pull(key='tmx_replays_today_raw')['track_id']}}$$,
             $${{ti.xcom_pull(key='tmx_replays_today_raw')['json_data']}}$$
         )
-        ON CONFLICT DO NOTHING;
+        ON CONFLICT (track_id)
+        DO UPDATE SET
+            json_data = EXCLUDED.json_data;
     """
     _push_replays_to_postgres = PostgresOperator(task_id = 'push_replays_to_postgres', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 

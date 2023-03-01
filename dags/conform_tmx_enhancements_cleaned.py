@@ -31,7 +31,9 @@ with DAG(
                 JSON_ARRAY_ELEMENTS(json_data::JSON) AS json_data
             FROM collect.tmx_authors_raw
         ) AS tmp
-        ON CONFLICT DO NOTHING;
+        ON CONFLICT (track_id, user_id)
+        DO UPDATE SET
+            author_role = EXCLUDED.author_role;
     """
     _authors_etl = PostgresOperator(task_id = 'authors_etl', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 
@@ -58,7 +60,14 @@ with DAG(
                 JSON_ARRAY_ELEMENTS(json_data::JSON) AS json_data
             FROM collect.tmx_replays_raw
         ) AS tmp
-        ON CONFLICT DO NOTHING;
+        ON CONFLICT (track_id, user_id)
+        DO UPDATE SET
+            replay_id = EXCLUDED.replay_id,
+            uploaded_year = EXCLUDED.uploaded_year,
+            uploaded_month = EXCLUDED.uploaded_month,
+            uploaded_day = EXCLUDED.uploaded_day,
+            replay_time = EXCLUDED.replay_time,
+            respawns = EXCLUDED.respawns
     """
     _replays_etl = PostgresOperator(task_id = 'replays_etl', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 
