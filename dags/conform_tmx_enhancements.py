@@ -5,7 +5,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 
 with DAG(
-    dag_id = 'conform_tmx_enhancements_cleaned',
+    dag_id = 'conform_tmx_enhancements',
     start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
@@ -16,7 +16,7 @@ with DAG(
 
     # authors etl
     sql = """
-        INSERT INTO conform.tmx_authors_cleaned
+        INSERT INTO conform.tmx_authors
         SELECT
             track_id,
             (json_data::JSON->>'UserID')::INTEGER AS user_id,
@@ -29,7 +29,7 @@ with DAG(
             SELECT
                 track_id,
                 JSON_ARRAY_ELEMENTS(json_data::JSON) AS json_data
-            FROM collect.tmx_authors_raw
+            FROM collect.tmx_authors
         ) AS tmp
         ON CONFLICT (track_id, user_id)
         DO UPDATE SET
@@ -40,7 +40,7 @@ with DAG(
 
     # replays etl
     sql = """
-        INSERT INTO conform.tmx_replays_cleaned
+        INSERT INTO conform.tmx_replays
         SELECT
             (json_data::JSON->>'ReplayID')::INTEGER AS replay_id,
             track_id,
@@ -58,7 +58,7 @@ with DAG(
             SELECT
                 track_id,
                 JSON_ARRAY_ELEMENTS(json_data::JSON) AS json_data
-            FROM collect.tmx_replays_raw
+            FROM collect.tmx_replays
         ) AS tmp
         ON CONFLICT (track_id, user_id)
         DO UPDATE SET

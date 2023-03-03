@@ -1,6 +1,7 @@
 from datetime import datetime
 from airflow import DAG
 from airflow.models.baseoperator import chain
+from airflow.utils.state import State
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
@@ -17,63 +18,65 @@ with DAG(
 
     tmio_collection_layer = TriggerDagRunOperator(
         task_id = 'tmio_collection_layer',
-        trigger_dag_id = 'collect_tmio_raw',
+        trigger_dag_id = 'collect_tmio',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
     
     tmio_collection_layer_enhancements = TriggerDagRunOperator(
         task_id = 'tmio_collection_layer_enhancements',
-        trigger_dag_id = 'collect_tmio_enhancements_raw',
+        trigger_dag_id = 'collect_tmio_enhancements',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmio_conform_layer = TriggerDagRunOperator(
         task_id = 'tmio_conform_layer',
-        trigger_dag_id = 'conform_tmio_cleaned',
+        trigger_dag_id = 'conform_tmio',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmio_conform_layer_enhancements = TriggerDagRunOperator(
         task_id = 'tmio_conform_layer_enhancements',
-        trigger_dag_id = 'conform_tmio_enhancements_cleaned',
+        trigger_dag_id = 'conform_tmio_enhancements',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmx_collection_layer = TriggerDagRunOperator(
         task_id = 'tmx_collection_layer',
-        trigger_dag_id = 'collect_tmx_raw',
+        trigger_dag_id = 'collect_tmx',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmx_collection_layer_enhancements = TriggerDagRunOperator(
         task_id = 'tmx_collection_layer_enhancements',
-        trigger_dag_id = 'collect_tmx_enhancements_raw',
+        trigger_dag_id = 'collect_tmx_enhancements',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmx_conform_layer = TriggerDagRunOperator(
         task_id = 'tmx_conform_layer',
-        trigger_dag_id = 'conform_tmx_cleaned',
+        trigger_dag_id = 'conform_tmx',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     tmx_conform_layer_enhancements = TriggerDagRunOperator(
         task_id = 'tmx_conform_layer_enhancements',
-        trigger_dag_id = 'conform_tmx_enhancements_cleaned',
+        trigger_dag_id = 'conform_tmx_enhancements',
         wait_for_completion = True,
-        poke_interval = 5
+        poke_interval = 2
     )
 
     chain(start_task,
-          tmio_collection_layer, tmio_conform_layer,
-          tmx_collection_layer, tmx_conform_layer,
+          tmio_collection_layer,
+          tmio_conform_layer,
+          tmx_collection_layer,
+          tmx_conform_layer,
           [tmx_collection_layer_enhancements, tmio_collection_layer_enhancements],
           [tmx_conform_layer_enhancements, tmio_conform_layer_enhancements],
           end_task
