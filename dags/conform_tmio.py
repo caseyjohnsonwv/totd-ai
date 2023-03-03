@@ -22,7 +22,10 @@ with DAG(
             data_month AS totd_month,
             data_day AS totd_day,
             json_data::JSON->'map'->>'mapUid' AS map_uid,
-            (json_data::JSON->'map'->>'exchangeid')::INTEGER AS exchange_id,
+            (CASE
+                WHEN (json_data::JSON->'map'->>'exchangeid')::INTEGER = 0 THEN NULL
+                ELSE (json_data::JSON->'map'->>'exchangeid')::INTEGER
+            END ) AS exchange_id,
             json_data::JSON->'map'->'authorplayer'->>'name' AS author_name,
             json_data::JSON->'map'->'authorplayer'->>'id' AS author_id,
             (json_data::JSON->'map'->>'authorScore')::FLOAT / 1000 AS author_time,
