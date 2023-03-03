@@ -29,7 +29,7 @@ def scrape_totd_today(ti):
 
 with DAG(
     dag_id = 'collect_tmio',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['collect', 'tmio']

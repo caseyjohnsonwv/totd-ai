@@ -6,10 +6,10 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'consume_totd',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
-    tags = ['consume'],
+    tags = ['consume', 'tmio'],
 ) as _:
     start_task = EmptyOperator(task_id = 'start_task')
     end_task = EmptyOperator(task_id = 'end_task')

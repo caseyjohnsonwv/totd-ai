@@ -1,7 +1,6 @@
 from datetime import datetime
 import json
 from airflow import DAG
-from airflow.models.baseoperator import chain
 from airflow.operators.empty import EmptyOperator
 from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
@@ -10,9 +9,9 @@ import requests
     
 
 def scrape_leaderboards_today(ti):
-    map_uid = ti.xcom_pull(dag_id = ti.dag_id, task_ids = 'get_totd_map_uid')[0][0]
-    mystery_uuid = 'ee00343d-d9be-4b1f-a44f-25ca149088e9'
-    url = f"https://trackmania.io/api/leaderboard/{mystery_uuid}/{map_uid}?offset=0&length=10"
+    tmp = ti.xcom_pull(dag_id = ti.dag_id, task_ids = 'get_totd_map_uid')[0]
+    map_uid, leaderboard_uid = tmp[0], tmp[1]
+    url = f"https://trackmania.io/api/leaderboard/{leaderboard_uid}/{map_uid}?offset=0&length=10"
     headers = {'User-Agent' : 'TOTD-Data-Lake-Daily-Load-Dev'}
     resp = requests.get(url, headers=headers)
     totd_today = resp.json()
@@ -27,7 +26,7 @@ def scrape_leaderboards_today(ti):
 
 with DAG(
     dag_id = 'collect_tmio_enhancements',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['collect', 'tmio']
@@ -38,7 +37,7 @@ with DAG(
 
     # query Postgres for latest TOTD map_uid
     sql = """
-        SELECT map_uid
+        SELECT map_uid, leaderboard_uid
         FROM CONFORM.TMIO
         ORDER BY totd_year, totd_month, totd_day DESC
         LIMIT 1;

@@ -6,7 +6,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'conform_tmio',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['conform', 'tmio']
@@ -33,7 +33,8 @@ with DAG(
             json_data::JSON->'map'->'submitterplayer'->>'id' AS submitter_id,
             date_part('year', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_year,
             date_part('month', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_month,
-            date_part('day', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_day
+            date_part('day', (json_data::JSON->'map'->>'timestamp')::DATE) AS uploaded_day,
+            json_data::JSON->>'leaderboarduid' AS leaderboard_uid
         FROM collect.tmio
         ON CONFLICT DO NOTHING;
     """

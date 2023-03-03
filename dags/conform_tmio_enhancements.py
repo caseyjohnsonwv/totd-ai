@@ -6,7 +6,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'conform_tmio_enhancements',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['conform', 'tmio'],
@@ -33,7 +33,7 @@ with DAG(
             FROM collect.tmio_leaderboards AS leader
             INNER JOIN conform.tmio AS tmio_totd
             ON tmio_totd.map_uid = leader.map_uid
-            INNER JOIN conform.tmx AS tmx_totd
+            LEFT JOIN conform.tmx AS tmx_totd
             ON tmx_totd.map_uid = leader.map_uid
         ) AS tmp
         ON CONFLICT (exchange_id, player_id)

@@ -6,10 +6,10 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'consume_totd_worldrecords',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
-    tags = ['consume'],
+    tags = ['consume', 'tmio', 'tmx'],
 ) as _:
     start_task = EmptyOperator(task_id = 'start_task')
     end_task = EmptyOperator(task_id = 'end_task')
@@ -26,7 +26,7 @@ with DAG(
             FROM (
                 SELECT
                     tmio.exchange_id,
-                    min(leader.replay_time) AS replay_time
+                    min(lead.replay_time) AS replay_time
                 FROM conform.tmio
                 INNER JOIN conform.tmio_leaderboards AS lead
                 ON tmio.exchange_id = lead.exchange_id
@@ -35,7 +35,7 @@ with DAG(
             INNER JOIN conform.tmio_leaderboards AS lead
             ON tmp.exchange_id = lead.exchange_id
                 AND tmp.replay_time = lead.replay_time
-        ON CONFLICT (exchange_id, player_user_id)
+        ON CONFLICT (exchange_id, user_id)
         DO UPDATE SET
             replay_time = EXCLUDED.replay_time,
             driven_date = EXCLUDED.driven_date;

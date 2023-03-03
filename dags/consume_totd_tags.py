@@ -6,10 +6,10 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'consume_totd_tags',
-    start_date = datetime(9999, 1, 1, 0, 0, 0),
+    start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
-    tags = ['consume'],
+    tags = ['consume', 'tmx'],
 ) as _:
     start_task = EmptyOperator(task_id = 'start_task')
     end_task = EmptyOperator(task_id = 'end_task')
@@ -18,13 +18,13 @@ with DAG(
     sql = """
         INSERT INTO consume.totd_tags
             SELECT
-                tmp.exchange_id,
+                tmp.track_id AS exchange_id,
                 xref.tag_name
             FROM (
                 SELECT
-                    exchange_id,
+                    track_id,
                     UNNEST(map_tags) AS tag_id
-                FROM conform.tmio
+                FROM conform.tmx
             ) AS tmp
             INNER JOIN ref.tmx_tags AS xref
             ON tmp.tag_id = xref.tag_id
