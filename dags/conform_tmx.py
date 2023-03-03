@@ -6,7 +6,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 with DAG(
     dag_id = 'conform_tmx',
-    start_date = datetime(2023, 1, 1, 0, 0, 0),
+    start_date = datetime(9999, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['conform', 'tmx'],

@@ -27,7 +27,7 @@ def scrape_leaderboards_today(ti):
 
 with DAG(
     dag_id = 'collect_tmio_enhancements',
-    start_date = datetime(2023, 1, 1, 0, 0, 0),
+    start_date = datetime(9999, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
     tags = ['collect', 'tmio']
