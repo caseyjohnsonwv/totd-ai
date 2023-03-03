@@ -27,6 +27,7 @@ with DAG(
                 tmx.wr_username AS wr_username,
                 tmx.wr_time AS wr_time,
                 tmio.author_name AS primary_author_username,
+                tmio.author_id AS primary_author_user_id,
                 tmio.author_time AS author_time,
                 tmio.gold_time AS gold_time,
                 tmio.silver_time AS silver_time,
