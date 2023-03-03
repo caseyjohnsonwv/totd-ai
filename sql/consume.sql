@@ -1,6 +1,7 @@
 CREATE SCHEMA CONSUME;
 
-CREATE TABLE consume.totd (
+-- Base table for TOTD data. Some joins required to find tags, full authors list, leaderboards, etc.
+CREATE TABLE CONSUME.TOTD (
     TOTD_DATE DATE,
     TOTD_DAY_OF_WEEK VARCHAR(10),
     EXCHANGE_ID INTEGER,
@@ -17,4 +18,11 @@ CREATE TABLE consume.totd (
     UPLOADED_DATE DATE,
     DAYS_BEFORE_TOTD INTEGER,
     UNIQUE(TOTD_DATE, EXCHANGE_ID)
+);
+
+-- Table for all tags associated with a TOTD map
+CREATE TABLE CONSUME.TOTD_TAGS (
+    EXCHANGE_ID INTEGER,
+    TAG_NAME VARCHAR(50),
+    UNIQUE(EXCHANGE_ID, TAG_NAME)
 );
