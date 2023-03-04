@@ -21,20 +21,6 @@ def scrape_authors_today(ti):
         'json_data' : json.dumps(totd_today)
     }
     ti.xcom_push(key = 'tmx_authors_today', value = data)
-    
-
-def scrape_replays_today(ti):
-    track_id = ti.xcom_pull(dag_id = ti.dag_id, task_ids = 'get_track_id')[0][0]
-    url = f"https://trackmania.exchange/api/replays/get_replays/{track_id}"
-    headers = {'User-Agent' : 'TOTD-Data-Lake-Daily-Load-Dev'}
-    resp = requests.get(url, headers=headers)
-    totd_today = resp.json()
-
-    data = {
-        'track_id' : track_id,
-        'json_data' : json.dumps(totd_today)
-    }
-    ti.xcom_push(key = 'tmx_replays_today', value = data)
 
 
 
@@ -68,13 +54,6 @@ with DAG(
     )
 
 
-    # send GET request for today's TOTD replays
-    _scrape_replays_today = PythonOperator(
-        task_id = 'scrape_replays_today',
-        python_callable = scrape_replays_today,
-    )
-
-
     # dump authors data into collection layer
     sql = """
         INSERT INTO collect.tmx_authors (track_id, json_data)
@@ -89,25 +68,11 @@ with DAG(
     _push_authors_to_postgres = PostgresOperator(task_id = 'push_authors_to_postgres', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 
 
-    # dump replays data into collection layer
-    sql = """
-        INSERT INTO collect.tmx_replays (track_id, json_data)
-        VALUES (
-            $${{ti.xcom_pull(key='tmx_replays_today')['track_id']}}$$,
-            $${{ti.xcom_pull(key='tmx_replays_today')['json_data']}}$$
-        )
-        ON CONFLICT (track_id)
-        DO UPDATE SET
-            json_data = EXCLUDED.json_data;
-    """
-    _push_replays_to_postgres = PostgresOperator(task_id = 'push_replays_to_postgres', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
-
-
     # orchestrate tasks
     chain(
         start_task,
         _get_track_id,
-        [_scrape_authors_today, _scrape_replays_today],
-        [_push_authors_to_postgres, _push_replays_to_postgres],
+        _scrape_authors_today,
+        _push_authors_to_postgres,
         end_task
     )

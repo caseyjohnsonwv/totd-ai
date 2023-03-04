@@ -89,6 +89,13 @@ with DAG(
         wait_for_completion = True,
         poke_interval = 2
     )
+    
+    totd_authors_consume_layer = TriggerDagRunOperator(
+        task_id = 'totd_authors_consume_layer',
+        trigger_dag_id = 'consume_totd_authors',
+        wait_for_completion = True,
+        poke_interval = 2
+    )
 
     chain(EmptyOperator(task_id = 'start_task'),
           tmio_collection_layer,
@@ -98,6 +105,6 @@ with DAG(
           [tmx_collection_layer_enhancements, tmio_collection_layer_enhancements],
           [tmx_conform_layer_enhancements, tmio_conform_layer_enhancements],
           EmptyOperator(task_id = 'ready_for_consume'),
-          [totd_consume_layer, totd_tags_consume_layer, totd_worldrecords_consume_layer],
+          [totd_consume_layer, totd_tags_consume_layer, totd_worldrecords_consume_layer, totd_authors_consume_layer],
           EmptyOperator(task_id = 'end_task'),
     )

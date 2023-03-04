@@ -30,10 +30,7 @@ with DAG(
             date_part('day', (json_data::JSON->>'UploadedAt')::DATE) AS uploaded_day,
             date_part('year', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_year,
             date_part('month', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_month,
-            date_part('day', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_day,
-            (json_data::JSON->>'ReplayWRTime')::FLOAT / 1000 AS wr_time,
-            (json_data::JSON->>'ReplayWRUserID')::INTEGER as wr_user_id,
-            json_data::JSON->>'ReplayWRUsername' as wr_username
+            date_part('day', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_day
         FROM collect.tmx
         ON CONFLICT DO NOTHING;
     """
