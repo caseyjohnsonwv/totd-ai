@@ -7,9 +7,10 @@ Overengineering an entire data lake environment to support an AI application tha
 ## Quickstart
 
 Will require a beefy computer to run locally, 10GB+ of RAM.
-1. Run `docker-compose up --build`
-2. Navigate to the Airflow UI
-3. Manually trigger the `master-ingestion-dag`
+1. Run `scripts/tmdb-volume.sh --create`
+2. Run `docker-compose up --build`
+3. Navigate to the Airflow UI
+4. Manually trigger the `master-ingestion-dag`
 
 Airflow:
 ```

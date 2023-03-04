@@ -78,7 +78,8 @@ x-airflow-common:
     airflow-postgres:
       condition: service_healthy
     trackmania-postgres:
-      condition: service_healthy
+      condition: service_healthy    
+
 
 services:
   trackmania-postgres:
@@ -89,6 +90,8 @@ services:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: trackmania
+    volumes:
+      - trackmania-postgres:/var/lib/postgresql/data:rw
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow", "-d", "trackmania"]
       interval: 5s
@@ -108,7 +111,7 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - ./postgres-db-volume:/var/lib/postgresql/data
+      - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
@@ -305,3 +308,5 @@ services:
 
 volumes:
   postgres-db-volume:
+  trackmania-postgres:
+    external: true
