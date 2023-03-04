@@ -63,9 +63,7 @@ with DAG(
             (j->>'day')::INTEGER,
             j->>'json_data'
         FROM JSON_ARRAY_ELEMENTS($${{ti.xcom_pull(key='tmio_totds')}}$$::JSON) AS j
-        ON CONFLICT (data_year, data_month, data_day)
-        DO UPDATE SET
-            json_data = EXCLUDED.json_data;
+        ON CONFLICT DO NOTHING;
     """
     _push_to_postgres = PostgresOperator(task_id = 'push_to_postgres', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
 
