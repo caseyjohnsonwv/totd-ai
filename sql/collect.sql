@@ -1,0 +1,28 @@
+CREATE SCHEMA COLLECT;
+
+-- Table for raw data from OpenPlanet API call
+CREATE TABLE COLLECT.TMIO (
+    DATA_YEAR INTEGER,
+    DATA_MONTH INTEGER,
+    DATA_DAY INTEGER,
+    JSON_DATA TEXT,
+    UNIQUE(DATA_YEAR, DATA_MONTH, DATA_DAY)
+);
+
+-- Table for raw data from OpenPlanet leaderboards API call
+CREATE TABLE COLLECT.TMIO_LEADERBOARDS (
+    MAP_UID VARCHAR(50) PRIMARY KEY,
+    JSON_DATA TEXT
+);
+
+-- Table for raw data from TMX API call
+CREATE TABLE COLLECT.TMX (
+    MAP_UID VARCHAR(50) PRIMARY KEY,
+    JSON_DATA TEXT
+);
+
+-- Table for raw data from TMX authors API call
+CREATE TABLE COLLECT.TMX_AUTHORS (
+    TRACK_ID INTEGER PRIMARY KEY,
+    JSON_DATA TEXT
+);

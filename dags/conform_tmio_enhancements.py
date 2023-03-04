@@ -5,7 +5,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 
 with DAG(
-    dag_id = 'conform_tmio_enhancements_cleaned',
+    dag_id = 'conform_tmio_enhancements',
     start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
@@ -17,7 +17,7 @@ with DAG(
 
     # leaderboards etl
     sql = """
-        INSERT INTO conform.tmio_leaderboards_cleaned
+        INSERT INTO conform.tmio_leaderboards
         SELECT
             exchange_id::INTEGER,
             json_data::JSON->'player'->>'name' AS player_name,
@@ -30,10 +30,10 @@ with DAG(
             SELECT
                 coalesce(tmio_totd.exchange_id, tmx_totd.track_id) AS exchange_id,
                 JSON_ARRAY_ELEMENTS(json_data::JSON->'tops') AS json_data
-            FROM collect.tmio_leaderboards_raw AS leader
-            INNER JOIN conform.tmio_cleaned AS tmio_totd
+            FROM collect.tmio_leaderboards AS leader
+            INNER JOIN conform.tmio AS tmio_totd
             ON tmio_totd.map_uid = leader.map_uid
-            INNER JOIN conform.tmx_cleaned AS tmx_totd
+            LEFT JOIN conform.tmx AS tmx_totd
             ON tmx_totd.map_uid = leader.map_uid
         ) AS tmp
         ON CONFLICT (exchange_id, player_id)

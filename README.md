@@ -6,7 +6,10 @@ Overengineering an entire data lake environment to support an AI application tha
 
 ## Quickstart
 
-Just run `docker-compose up --build`. Will require a beefy computer to run locally, 10GB+ of RAM.
+Will require a beefy computer to run locally, 10GB+ of RAM.
+1. Run `docker-compose up --build`
+2. Navigate to the Airflow UI
+3. Manually trigger the `master-ingestion-dag`
 
 Airflow:
 ```
@@ -15,7 +18,7 @@ Username: airflow
 Password: airflow
 ```
 
-Postgres:
+Adminer for Postgres:
 ```
 UI: localhost:8081
 System: PostgreSQL

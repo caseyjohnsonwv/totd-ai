@@ -5,7 +5,7 @@ from airflow.providers.postgres.operators.postgres import PostgresOperator
 
 
 with DAG(
-    dag_id = 'conform_tmx_cleaned',
+    dag_id = 'conform_tmx',
     start_date = datetime(2023, 1, 1, 0, 0, 0),
     catchup = False,
     max_active_runs = 1,
@@ -16,7 +16,7 @@ with DAG(
 
     # transform raw json data to structured tabular format and move to conform layer
     sql = """
-        INSERT INTO conform.tmx_cleaned
+        INSERT INTO conform.tmx
         SELECT
             map_uid,
             (json_data::JSON->>'TrackID')::INTEGER AS track_id,
@@ -30,11 +30,8 @@ with DAG(
             date_part('day', (json_data::JSON->>'UploadedAt')::DATE) AS uploaded_day,
             date_part('year', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_year,
             date_part('month', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_month,
-            date_part('day', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_day,
-            (json_data::JSON->>'ReplayWRTime')::FLOAT / 1000 AS wr_time,
-            (json_data::JSON->>'ReplayWRUserID')::INTEGER as wr_user_id,
-            json_data::JSON->>'ReplayWRUsername' as wr_username
-        FROM collect.tmx_raw
+            date_part('day', (json_data::JSON->>'UpdatedAt')::DATE) AS updated_day
+        FROM collect.tmx
         ON CONFLICT DO NOTHING;
     """
     etl = PostgresOperator(task_id = 'etl', sql=sql, postgres_conn_id='trackmania_postgres', database='trackmania')
